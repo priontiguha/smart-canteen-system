@@ -23,21 +23,35 @@
                     <a class="sidebar-link active" asp-controller="Account" asp-action="Dashboard">
                         <span>🏠</span> Dashboard
                     </a>
-                    <a class="sidebar-link" href="#">
-                        <span>🍽️</span> Menu
-                    </a>
-                    <a class="sidebar-link" href="#">
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a class="sidebar-link" asp-controller="Menu" asp-action="Index">
+                            <span>🍽️</span> Menu
+                        </a>
+                    }
+                    else
+                    {
+                        <a class="sidebar-link" asp-controller="Order" asp-action="Menu">
+                            <span>🍽️</span> Menu
+                        </a>
+                    }
+
+                    <a class="sidebar-link" asp-controller="Order" asp-action="MyOrders">
                         <span>🛒</span> Orders
                     </a>
-                    <a class="sidebar-link" href="#">
+                    <a class="sidebar-link" asp-controller="Wallet" asp-action="Index">
                         <span>💳</span> Wallet
                     </a>
-                    <a class="sidebar-link" href="#">
-                        <span>👤</span> Users
-                    </a>
-                    <a class="sidebar-link" href="#">
-                        <span>⚙️</span> Settings
-                    </a>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a class="sidebar-link" asp-controller="Order" asp-action="KitchenQueue">
+                            <span>🍳</span> Kitchen Queue
+                        </a>
+                        <a class="sidebar-link" asp-controller="UserManagement" asp-action="Index">
+                            <span>👤</span> Users
+                        </a>
+                    }
                 </nav>
 
                 <form asp-controller="Account" asp-action="Logout" method="post" class="mt-auto">
