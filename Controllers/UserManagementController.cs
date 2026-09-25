@@ -139,16 +139,29 @@ public class UserManagementController : Controller
     public async Task<IActionResult> Delete(Guid id)
     {
         var user = await _context.Users
-            .Include(x => x.Role)
             .FirstOrDefaultAsync(x => x.Id == id);
 
         if (user is null)
             return NotFound();
 
-        _context.Users.Remove(user);
-        await _context.SaveChangesAsync();
+        var hasOrders = await _context.Orders.AnyAsync(x => x.UserId == id);
+        if (hasOrders)
+        {
+            TempData["ErrorMessage"] = "This user cannot be deleted because they already have order history.";
+            return RedirectToAction(nameof(Index));
+        }
 
-        TempData["SuccessMessage"] = "User deleted successfully.";
+        try
+        {
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "User deleted successfully.";
+        }
+        catch (DbUpdateException)
+        {
+            TempData["ErrorMessage"] = "Unable to delete this user because the account is linked to other records.";
+        }
+
         return RedirectToAction(nameof(Index));
     }
 }

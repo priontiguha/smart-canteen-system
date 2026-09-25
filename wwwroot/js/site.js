@@ -1,4 +1,17 @@
 ﻿document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.toggle-password').forEach((button) => {
+        button.addEventListener('click', function () {
+            const targetName = this.dataset.target;
+            const input = document.querySelector(`input[name="${targetName}"]`);
+            if (!input) return;
+
+            const isPassword = input.type === 'password';
+            input.type = isPassword ? 'text' : 'password';
+            this.textContent = isPassword ? '🙈' : '👁';
+            this.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
+        });
+    });
+
     const orderForm = document.getElementById('order-form');
     if (!orderForm) {
         return;

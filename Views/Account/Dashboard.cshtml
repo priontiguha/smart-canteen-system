@@ -2,11 +2,14 @@
 @{
     ViewData["Title"] = "Dashboard";
     var isAdmin = User.IsInRole("Admin");
+    var isStudent = User.IsInRole("Student");
     var menuCount = (int)(ViewBag.MenuCount ?? 0);
     var orderCount = (int)(ViewBag.OrderCount ?? 0);
     var revenue = (decimal)(ViewBag.Revenue ?? 0m);
     var lowStockCount = (int)(ViewBag.LowStockCount ?? 0);
     var recentOrders = ViewBag.RecentOrders as IEnumerable<canteen_management.Models.Order> ?? new List<canteen_management.Models.Order>();
+    var recentOrdersTitle = isAdmin ? "Recent Orders" : "My Recent Orders";
+    var recentOrdersSubtitle = isAdmin ? "Latest customer activity" : "Your recent food orders";
 }
 
 <div class="dashboard-page">
@@ -23,25 +26,25 @@
         <div class="alert alert-success mb-4">@TempData["AdminSuccessMessage"]</div>
     }
 
-    <div class="row g-4 mb-4">
-        <div class="col-md-3">
-            <div class="dashboard-card">
-                <div class="card-icon">📦</div>
-                <h4>Menu Items</h4>
-                <p>@menuCount Total</p>
-                <a asp-controller="Menu" asp-action="Index" class="btn btn-primary btn-sm">Open</a>
+    @if (isAdmin)
+    {
+        <div class="row g-4 mb-4">
+            <div class="col-md-3">
+                <div class="dashboard-card">
+                    <div class="card-icon">📦</div>
+                    <h4>Menu Items</h4>
+                    <p>@menuCount Total</p>
+                    <a asp-controller="Menu" asp-action="Index" class="btn btn-primary btn-sm">Open</a>
+                </div>
             </div>
-        </div>
-        <div class="col-md-3">
-            <div class="dashboard-card">
-                <div class="card-icon">🛒</div>
-                <h4>Orders</h4>
-                <p>@orderCount Total</p>
-                <a asp-controller="Order" asp-action="KitchenQueue" class="btn btn-primary btn-sm">View</a>
+            <div class="col-md-3">
+                <div class="dashboard-card">
+                    <div class="card-icon">🛒</div>
+                    <h4>Orders</h4>
+                    <p>@orderCount Total</p>
+                    <a asp-controller="Order" asp-action="KitchenQueue" class="btn btn-primary btn-sm">View</a>
+                </div>
             </div>
-        </div>
-        @if (isAdmin)
-        {
             <div class="col-md-3">
                 <div class="dashboard-card">
                     <div class="card-icon">💰</div>
@@ -58,16 +61,16 @@
                     <a asp-controller="Menu" asp-action="Index" class="btn btn-primary btn-sm">Review</a>
                 </div>
             </div>
-        }
-    </div>
+        </div>
+    }
 
     <div class="row g-4">
         <div class="col-lg-8">
             <div class="dashboard-section h-100">
                 <div class="section-heading">
                     <div>
-                        <h3>Recent Orders</h3>
-                        <p class="text-muted mb-0">Latest customer activity</p>
+                        <h3>@recentOrdersTitle</h3>
+                        <p class="text-muted mb-0">@recentOrdersSubtitle</p>
                     </div>
                     <span class="badge bg-primary">Live</span>
                 </div>

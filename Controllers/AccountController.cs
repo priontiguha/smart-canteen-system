@@ -129,18 +129,50 @@ public class AccountController : Controller
         var name = User.FindFirstValue(ClaimTypes.Name) ?? "";
         var email = User.FindFirstValue(ClaimTypes.Email) ?? "";
         var role = User.FindFirstValue(ClaimTypes.Role) ?? UserRole.Student.ToString();
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        Guid? currentUserId = Guid.TryParse(userIdClaim, out var parsedUserId) ? parsedUserId : null;
+
+        var isStudent = User.IsInRole(UserRole.Student.ToString());
+        var isAdminUser = User.IsInRole(UserRole.Admin.ToString());
 
         var menuCount = await _context.MenuItems.CountAsync();
-        var orderCount = await _context.Orders.CountAsync();
         var lowStockCount = await _context.MenuItems.CountAsync(x => x.StockQuantity <= 5);
         var revenue = await _context.Orders.SumAsync(x => (decimal?)x.TotalAmount) ?? 0m;
 
-        var recentOrders = await _context.Orders
+        IQueryable<Order> recentOrdersQuery = _context.Orders
             .Include(x => x.User)
+            .AsNoTracking();
+
+        if (isStudent)
+        {
+            if (currentUserId.HasValue)
+            {
+                recentOrdersQuery = recentOrdersQuery.Where(x => x.UserId == currentUserId.Value);
+            }
+            else
+            {
+                recentOrdersQuery = recentOrdersQuery.Where(x => false);
+            }
+        }
+
+        var orderCount = isStudent && currentUserId.HasValue
+            ? await _context.Orders.CountAsync(x => x.UserId == currentUserId.Value)
+            : await _context.Orders.CountAsync();
+
+        if (isStudent)
+        {
+            menuCount = 0;
+            lowStockCount = 0;
+            revenue = 0m;
+        }
+
+        var recentOrders = await recentOrdersQuery
             .OrderByDescending(x => x.CreatedAt)
             .Take(5)
             .ToListAsync();
 
+        ViewBag.IsStudent = isStudent;
+        ViewBag.IsAdmin = isAdminUser;
         ViewBag.MenuCount = menuCount;
         ViewBag.OrderCount = orderCount;
         ViewBag.LowStockCount = lowStockCount;
@@ -150,18 +182,24 @@ public class AccountController : Controller
         return View(new { Name = name, Email = email, Role = role });
     }
 
-    [HttpPost]
+    [HttpPost("Logout")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        return RedirectToAction("Login", "Account");
+        Response.Cookies.Delete("canteen_auth");
+        HttpContext.User = new ClaimsPrincipal(new ClaimsIdentity());
+        TempData.Clear();
+        return Redirect("/Account/Login");
     }
 
-    [HttpGet("/Account/Logout")]
+    [HttpGet("Logout")]
     public async Task<IActionResult> LogoutGet()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        return RedirectToAction("Login", "Account");
+        Response.Cookies.Delete("canteen_auth");
+        HttpContext.User = new ClaimsPrincipal(new ClaimsIdentity());
+        TempData.Clear();
+        return Redirect("/Account/Login");
     }
 }

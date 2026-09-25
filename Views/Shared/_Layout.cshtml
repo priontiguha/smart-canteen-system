@@ -29,22 +29,6 @@
                         <a class="sidebar-link" asp-controller="Menu" asp-action="Index">
                             <span>🍽️</span> Menu
                         </a>
-                    }
-                    else
-                    {
-                        <a class="sidebar-link" asp-controller="Order" asp-action="Menu">
-                            <span>🍽️</span> Menu
-                        </a>
-                    }
-
-                    <a class="sidebar-link" asp-controller="Order" asp-action="MyOrders">
-                        <span>🛒</span> Orders
-                    </a>
-                    <a class="sidebar-link" asp-controller="Wallet" asp-action="Index">
-                        <span>💳</span> Wallet
-                    </a>
-                    @if (User.IsInRole("Admin"))
-                    {
                         <a class="sidebar-link" asp-controller="Order" asp-action="KitchenQueue">
                             <span>🍳</span> Kitchen Queue
                         </a>
@@ -52,9 +36,21 @@
                             <span>👤</span> Users
                         </a>
                     }
+                    else
+                    {
+                        <a class="sidebar-link" asp-controller="Order" asp-action="Menu">
+                            <span>🍽️</span> Menu
+                        </a>
+                        <a class="sidebar-link" asp-controller="Order" asp-action="MyOrders">
+                            <span>🛒</span> Orders
+                        </a>
+                        <a class="sidebar-link" asp-controller="Wallet" asp-action="Index">
+                            <span>💳</span> Wallet
+                        </a>
+                    }
                 </nav>
 
-                <form asp-controller="Account" asp-action="Logout" method="post" class="mt-auto">
+                <form action="@Url.Action("Logout", "Account")" method="post" class="mt-auto">
                     @Html.AntiForgeryToken()
                     <button type="submit" class="btn btn-logout w-100">Logout</button>
                 </form>

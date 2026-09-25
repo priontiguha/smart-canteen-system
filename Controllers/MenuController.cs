@@ -3,6 +3,7 @@ using canteen_management.Models;
 using canteen_management.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace canteen_management.Controllers;
 
@@ -123,6 +124,10 @@ public class MenuController : Controller
         catch (InvalidOperationException ex)
         {
             TempData["ErrorMessage"] = ex.Message;
+        }
+        catch (DbUpdateException)
+        {
+            TempData["ErrorMessage"] = "This menu item cannot be deleted because it is already linked to existing orders.";
         }
 
         return RedirectToAction(nameof(Index));
