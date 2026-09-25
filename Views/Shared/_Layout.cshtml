@@ -3,54 +3,75 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - canteen_management</title>
-    <script type="importmap"></script>
+    <title>@ViewData["Title"] - Smart Canteen</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/canteen_management.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">canteen_management</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        @if (User?.Identity?.IsAuthenticated == true)
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Dashboard">Dashboard</a>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">Login</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Register">Register</a>
-                            </li>
-                        }
-                    </ul>
+    @if (User?.Identity?.IsAuthenticated == true)
+    {
+        <div class="app-shell">
+            <aside class="sidebar">
+                <div class="sidebar-brand">
+                    <div class="brand-badge">SC</div>
+                    <div>
+                        <h6>Smart Canteen</h6>
+                    </div>
                 </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - canteen_management - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                <nav class="sidebar-nav">
+                    <a class="sidebar-link active" asp-controller="Account" asp-action="Dashboard">
+                        <span>🏠</span> Dashboard
+                    </a>
+                    <a class="sidebar-link" href="#">
+                        <span>🍽️</span> Menu
+                    </a>
+                    <a class="sidebar-link" href="#">
+                        <span>🛒</span> Orders
+                    </a>
+                    <a class="sidebar-link" href="#">
+                        <span>💳</span> Wallet
+                    </a>
+                    <a class="sidebar-link" href="#">
+                        <span>👤</span> Users
+                    </a>
+                    <a class="sidebar-link" href="#">
+                        <span>⚙️</span> Settings
+                    </a>
+                </nav>
+
+                <form asp-controller="Account" asp-action="Logout" method="post" class="mt-auto">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-logout w-100">Logout</button>
+                </form>
+            </aside>
+
+            <div class="main-panel">
+                <header class="topbar">
+                    <div>
+                        <p class="topbar-label">Welcome back</p>
+                        <h3>@User.Identity?.Name</h3>
+                    </div>
+                    <div class="topbar-actions">
+                        <span class="badge-role">@User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</span>
+                    </div>
+                </header>
+
+                <main role="main" class="page-content">
+                    @RenderBody()
+                </main>
+            </div>
         </div>
-    </footer>
+    }
+    else
+    {
+        <div class="auth-shell">
+            <main role="main" class="w-100">
+                @RenderBody()
+            </main>
+        </div>
+    }
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

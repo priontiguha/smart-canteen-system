@@ -4,94 +4,65 @@
     var isAdmin = User.IsInRole("Admin");
 }
 
-<div class="container-fluid dashboard-page py-4">
-
-    <!-- Welcome Header -->
-    <div class="dashboard-header mb-4">
+<div class="dashboard-page">
+    <div class="dashboard-header">
         <div>
             <p class="text-muted mb-1">Smart Canteen</p>
-            <h1 class="fw-bold mb-1">
-                Welcome, @User.Identity?.Name! 👋
-            </h1>
-            <p class="text-muted mb-0">
-                What would you like to have today?
-            </p>
+            <h1>Welcome, @User.Identity?.Name! 👋</h1>
         </div>
-
-        <a asp-action="Logout"
-           asp-controller="Account"
-           class="btn btn-outline-danger">
-            Logout
-        </a>
+        <span class="badge text-bg-light border">@User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</span>
     </div>
 
     @if (TempData["AdminSuccessMessage"] != null)
     {
-        <div class="alert alert-success">@TempData["AdminSuccessMessage"]</div>
+        <div class="alert alert-success mb-4">@TempData["AdminSuccessMessage"]</div>
     }
 
-    <!-- Quick Action Cards -->
     <div class="row g-4 mb-4">
-
-        @if (isAdmin)
-        {
-            <div class="col-md-4">
-                <div class="dashboard-card h-100 border-primary">
-                    <div class="card-icon">⚙️</div>
-                    <h4>Admin Panel</h4>
-                    <p class="text-muted">
-                        Manage menu items, users, and canteen settings.
-                    </p>
-                    <button class="btn btn-primary" type="button">Open Admin Tools</button>
-                </div>
-            </div>
-        }
-
-        <div class="col-md-4">
-            <div class="dashboard-card h-100">
-                <div class="card-icon">🍔</div>
-                <h4>Browse Menu</h4>
-                <p class="text-muted">
-                    Explore today's available food items.
-                </p>
-                <button class="btn btn-primary" disabled>
-                    Coming Soon
-                </button>
+        <div class="col-md-3">
+            <div class="dashboard-card">
+                <div class="card-icon">📦</div>
+                <h4>Menu Items</h4>
+                <p>24 Active</p>
+                <button class="btn btn-primary btn-sm">Open</button>
             </div>
         </div>
-
-        <div class="col-md-4">
-            <div class="dashboard-card h-100">
+        <div class="col-md-3">
+            <div class="dashboard-card">
                 <div class="card-icon">🛒</div>
-                <h4>My Orders</h4>
-                <p class="text-muted">
-                    Check your recent and previous orders.
-                </p>
-                <button class="btn btn-primary">
-                    View Orders
-                </button>
+                <h4>Orders</h4>
+                <p>18 Today</p>
+                <button class="btn btn-primary btn-sm">View</button>
             </div>
         </div>
-
-        <div class="col-md-4">
-            <div class="dashboard-card h-100">
-                <div class="card-icon">👤</div>
-                <h4>My Profile</h4>
-                <p class="text-muted">
-                    View and manage your account information.
-                </p>
-                <button class="btn btn-primary">
-                    View Profile
-                </button>
+        <div class="col-md-3">
+            <div class="dashboard-card">
+                <div class="card-icon">💰</div>
+                <h4>Revenue</h4>
+                <p>$1,250</p>
+                <button class="btn btn-primary btn-sm">Report</button>
             </div>
         </div>
-
+        <div class="col-md-3">
+            <div class="dashboard-card">
+                <div class="card-icon">⚠️</div>
+                <h4>Low Stock</h4>
+                <p>5 Items</p>
+                <button class="btn btn-primary btn-sm">Review</button>
+            </div>
+        </div>
     </div>
 
     @if (isAdmin)
     {
         <div class="dashboard-section mb-4">
-            <h3>Create User</h3>
+            <div class="section-heading">
+                <div>
+                    <h3>Create User</h3>
+                    <p class="text-muted mb-0">Add student, faculty, or kitchen staff accounts.</p>
+                </div>
+            </div>
+
             <form asp-action="CreateUser" method="post">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
@@ -129,67 +100,74 @@
         </div>
     }
 
-    <!-- Dashboard Content -->
     <div class="row g-4">
-
-        <!-- Today's Special -->
         <div class="col-lg-8">
             <div class="dashboard-section h-100">
                 <div class="section-heading">
                     <div>
-                        <h3>Today's Special</h3>
-                        <p class="text-muted mb-0">
-                            Popular choices from our canteen
-                        </p>
+                        <h3>Recent Orders</h3>
+                        <p class="text-muted mb-0">Latest customer activity</p>
                     </div>
-                    <span class="badge bg-primary">Popular</span>
+                    <span class="badge bg-primary">Live</span>
                 </div>
 
-                <div class="food-placeholder">
-                    <div class="food-icon">🍽️</div>
-                    <h4>Delicious meals are waiting for you!</h4>
-                    <p class="text-muted">
-                        Browse the menu and choose your favourite food.
-                    </p>
-                    <button class="btn btn-primary">
-                        Explore Menu
-                    </button>
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Order</th>
+                                <th>Customer</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#1024</td>
+                                <td>John Doe</td>
+                                <td>12:30 PM</td>
+                                <td><span class="badge bg-warning text-dark">Pending</span></td>
+                            </tr>
+                            <tr>
+                                <td>#1025</td>
+                                <td>Alice Smith</td>
+                                <td>12:45 PM</td>
+                                <td><span class="badge bg-info text-dark">Preparing</span></td>
+                            </tr>
+                            <tr>
+                                <td>#1026</td>
+                                <td>Mark Lee</td>
+                                <td>1:00 PM</td>
+                                <td><span class="badge bg-success">Ready</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
 
-        <!-- Account Information -->
         <div class="col-lg-4">
             <div class="dashboard-section h-100">
-                <h3>Account Information</h3>
+                <h3>Account</h3>
 
                 <div class="profile-info">
-                    <div class="profile-avatar">
-                        @(User.Identity?.Name?.Substring(0, 1).ToUpper())
-                    </div>
-
+                    <div class="profile-avatar">@User.Identity?.Name?.Substring(0, 1).ToUpper()</div>
                     <div>
                         <h5 class="mb-1">@User.Identity?.Name</h5>
-                        <p class="text-muted mb-0">
-                            @User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value
-                        </p>
+                        <p class="text-muted mb-0">@User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value</p>
                     </div>
-                </div>
-
-                <hr />
-
-                <div class="account-row">
-                    <span>Account Status</span>
-                    <span class="badge bg-success">Active</span>
                 </div>
 
                 <div class="account-row">
                     <span>Role</span>
                     <span>@(User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value ?? "Student")</span>
                 </div>
+                <div class="account-row">
+                    <span>Status</span>
+                    <span class="badge bg-success">Active</span>
+                </div>
             </div>
         </div>
-
     </div>
-
 </div>
+

@@ -24,6 +24,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<IMenuService, MenuService>();
+builder.Services.AddScoped<IWalletService, WalletService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtSettings>() ?? new JwtSettings();
 
