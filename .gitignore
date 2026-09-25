@@ -1,0 +1,61 @@
+# .NET build outputs
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Aa]rtifacts/
+
+# Visual Studio / VS Code
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider
+.idea/
+*.iml
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+project.lock.json
+*.nuget.props
+*.nuget.targets
+
+# ASP.NET / web
+*.db
+*.db-shm
+*.db-wal
+*.pid
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Environment / secrets
+.env
+.env.*
+appsettings.Development.json
+secrets.json
+
+# Coverage / test results
+TestResults/
+coverage*/
+*.coverage
+*.coveragexml
+
+# Publish output
+publish/
+
+# Local tool cache
+.toolstarget/
