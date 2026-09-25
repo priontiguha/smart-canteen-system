@@ -102,7 +102,7 @@ public class OrderService : IOrderService
         return await _context.Orders
             .Include(x => x.Items)
             .ThenInclude(x => x.MenuItem)
-            .Where(x => x.Status != OrderStatus.ReadyForPickup)
+            .Where(x => x.Status != OrderStatus.Delivered)
             .OrderBy(x => x.CreatedAt)
             .ToListAsync();
     }
@@ -121,8 +121,18 @@ public class OrderService : IOrderService
         if (order is null)
             throw new InvalidOperationException("Order not found.");
 
-        if (order.Status == OrderStatus.ReadyForPickup && status != OrderStatus.ReadyForPickup)
-            throw new InvalidOperationException("Order is already completed.");
+        if (order.Status == OrderStatus.Delivered)
+            throw new InvalidOperationException("Order has already been delivered.");
+
+        var validTransitions = new Dictionary<OrderStatus, OrderStatus[]>
+        {
+            [OrderStatus.Pending] = [OrderStatus.Preparing],
+            [OrderStatus.Preparing] = [OrderStatus.ReadyForPickup],
+            [OrderStatus.ReadyForPickup] = [OrderStatus.Delivered]
+        };
+
+        if (!validTransitions.TryGetValue(order.Status, out var allowedStatuses) || !allowedStatuses.Contains(status))
+            throw new InvalidOperationException($"Order cannot move from {order.Status} to {status}.");
 
         order.Status = status;
         order.UpdatedAt = DateTime.UtcNow;

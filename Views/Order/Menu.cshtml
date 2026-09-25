@@ -27,75 +27,133 @@
     }
 
     <div class="row g-4">
-        <div class="col-md-4">
-            <div class="dashboard-section">
-                <h3>Breakfast</h3>
-                @if (breakfast.Count == 0)
-                {
-                    <p class="text-muted">No breakfast items available.</p>
-                }
-                else
-                {
-                    @foreach (var item in breakfast)
-                    {
-                        <div class="border rounded p-3 mb-3">
-                            <h5>@item.Name</h5>
-                            <p class="mb-2 text-muted">@item.Description</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <strong>$@item.Price</strong>
-                                <span class="badge bg-light text-dark">Stock: @item.StockQuantity</span>
-                            </div>
+        <div class="col-lg-8">
+            <form id="order-form" asp-controller="Order" asp-action="PlaceOrder" method="post">
+                @Html.AntiForgeryToken()
+                <div id="selectedItemsContainer"></div>
+
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="dashboard-section">
+                            <h3>Breakfast</h3>
+                            @if (breakfast.Count == 0)
+                            {
+                                <p class="text-muted">No breakfast items available.</p>
+                            }
+                            else
+                            {
+                                @foreach (var item in breakfast)
+                                {
+                                    <div class="menu-card border rounded p-3 mb-3" data-menu-id="@item.Id" data-name="@item.Name" data-price="@item.Price" data-max-stock="@item.StockQuantity">
+                                        <h5>@item.Name</h5>
+                                        <p class="mb-2 text-muted">@item.Description</p>
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <strong>$@item.Price</strong>
+                                            <span class="badge bg-light text-dark">Stock: @item.StockQuantity</span>
+                                        </div>
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="qty-box d-flex align-items-center border rounded overflow-hidden">
+                                                <button type="button" class="qty-btn btn btn-light px-3" data-action="decrease">-</button>
+                                                <span class="qty-value px-3" data-qty="0">0</span>
+                                                <button type="button" class="qty-btn btn btn-light px-3" data-action="increase">+</button>
+                                            </div>
+                                            <span class="small text-muted">Qty</span>
+                                        </div>
+                                    </div>
+                                }
+                            }
                         </div>
-                    }
-                }
-            </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="dashboard-section">
+                            <h3>Lunch</h3>
+                            @if (lunch.Count == 0)
+                            {
+                                <p class="text-muted">No lunch items available.</p>
+                            }
+                            else
+                            {
+                                @foreach (var item in lunch)
+                                {
+                                    <div class="menu-card border rounded p-3 mb-3" data-menu-id="@item.Id" data-name="@item.Name" data-price="@item.Price" data-max-stock="@item.StockQuantity">
+                                        <h5>@item.Name</h5>
+                                        <p class="mb-2 text-muted">@item.Description</p>
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <strong>$@item.Price</strong>
+                                            <span class="badge bg-light text-dark">Stock: @item.StockQuantity</span>
+                                        </div>
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="qty-box d-flex align-items-center border rounded overflow-hidden">
+                                                <button type="button" class="qty-btn btn btn-light px-3" data-action="decrease">-</button>
+                                                <span class="qty-value px-3" data-qty="0">0</span>
+                                                <button type="button" class="qty-btn btn btn-light px-3" data-action="increase">+</button>
+                                            </div>
+                                            <span class="small text-muted">Qty</span>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="dashboard-section">
+                            <h3>Dinner</h3>
+                            @if (dinner.Count == 0)
+                            {
+                                <p class="text-muted">No dinner items available.</p>
+                            }
+                            else
+                            {
+                                @foreach (var item in dinner)
+                                {
+                                    <div class="menu-card border rounded p-3 mb-3" data-menu-id="@item.Id" data-name="@item.Name" data-price="@item.Price" data-max-stock="@item.StockQuantity">
+                                        <h5>@item.Name</h5>
+                                        <p class="mb-2 text-muted">@item.Description</p>
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <strong>$@item.Price</strong>
+                                            <span class="badge bg-light text-dark">Stock: @item.StockQuantity</span>
+                                        </div>
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="qty-box d-flex align-items-center border rounded overflow-hidden">
+                                                <button type="button" class="qty-btn btn btn-light px-3" data-action="decrease">-</button>
+                                                <span class="qty-value px-3" data-qty="0">0</span>
+                                                <button type="button" class="qty-btn btn btn-light px-3" data-action="increase">+</button>
+                                            </div>
+                                            <span class="small text-muted">Qty</span>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </form>
         </div>
 
-        <div class="col-md-4">
-            <div class="dashboard-section">
-                <h3>Lunch</h3>
-                @if (lunch.Count == 0)
-                {
-                    <p class="text-muted">No lunch items available.</p>
-                }
-                else
-                {
-                    @foreach (var item in lunch)
-                    {
-                        <div class="border rounded p-3 mb-3">
-                            <h5>@item.Name</h5>
-                            <p class="mb-2 text-muted">@item.Description</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <strong>$@item.Price</strong>
-                                <span class="badge bg-light text-dark">Stock: @item.StockQuantity</span>
-                            </div>
-                        </div>
-                    }
-                }
-            </div>
-        </div>
+        <div class="col-lg-4">
+            <div class="dashboard-section sticky-top" style="top: 20px;">
+                <div class="section-heading">
+                    <div>
+                        <h3>Cart Summary</h3>
+                        <p class="text-muted mb-0">Selected items</p>
+                    </div>
+                </div>
 
-        <div class="col-md-4">
-            <div class="dashboard-section">
-                <h3>Dinner</h3>
-                @if (dinner.Count == 0)
-                {
-                    <p class="text-muted">No dinner items available.</p>
-                }
-                else
-                {
-                    @foreach (var item in dinner)
-                    {
-                        <div class="border rounded p-3 mb-3">
-                            <h5>@item.Name</h5>
-                            <p class="mb-2 text-muted">@item.Description</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <strong>$@item.Price</strong>
-                                <span class="badge bg-light text-dark">Stock: @item.StockQuantity</span>
-                            </div>
-                        </div>
-                    }
-                }
+                <div id="cartItems" class="mb-3"></div>
+
+                <div class="border-top pt-3">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Subtotal</span>
+                        <strong id="cartSubtotal">$0.00</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Wallet</span>
+                        <strong>$@walletBalance</strong>
+                    </div>
+                    <button type="submit" form="order-form" class="btn btn-primary w-100">Place Order</button>
+                </div>
             </div>
         </div>
     </div>

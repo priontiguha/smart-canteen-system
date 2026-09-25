@@ -91,7 +91,7 @@
                                         <td>#@order.Id.ToString().Substring(0, 8)</td>
                                         <td>@(order.User?.FullName ?? "Unknown")</td>
                                         <td>@order.CreatedAt.ToLocalTime().ToString("g")</td>
-                                        <td><span class="badge @(order.Status == canteen_management.Models.OrderStatus.ReadyForPickup ? "bg-success" : order.Status == canteen_management.Models.OrderStatus.Preparing ? "bg-info text-dark" : "bg-warning text-dark")">@order.Status</span></td>
+                                        <td><span class="badge @(order.Status == canteen_management.Models.OrderStatus.Delivered ? "bg-success" : order.Status == canteen_management.Models.OrderStatus.ReadyForPickup ? "bg-warning text-dark" : order.Status == canteen_management.Models.OrderStatus.Preparing ? "bg-info text-dark" : "bg-primary")">@order.Status</span></td>
                                     </tr>
                                 }
                             }
