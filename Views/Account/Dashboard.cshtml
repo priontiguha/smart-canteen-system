@@ -40,22 +40,25 @@
                 <a asp-controller="Order" asp-action="KitchenQueue" class="btn btn-primary btn-sm">View</a>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="dashboard-card">
-                <div class="card-icon">💰</div>
-                <h4>Revenue</h4>
-                <p>$@revenue.ToString("0.00")</p>
-                <a asp-controller="Wallet" asp-action="Index" class="btn btn-primary btn-sm">Report</a>
+        @if (isAdmin)
+        {
+            <div class="col-md-3">
+                <div class="dashboard-card">
+                    <div class="card-icon">💰</div>
+                    <h4>Revenue</h4>
+                    <p>$@revenue.ToString("0.00")</p>
+                    <a asp-controller="Wallet" asp-action="Index" class="btn btn-primary btn-sm">Report</a>
+                </div>
             </div>
-        </div>
-        <div class="col-md-3">
-            <div class="dashboard-card">
-                <div class="card-icon">⚠️</div>
-                <h4>Low Stock</h4>
-                <p>@lowStockCount Items</p>
-                <a asp-controller="Menu" asp-action="Index" class="btn btn-primary btn-sm">Review</a>
+            <div class="col-md-3">
+                <div class="dashboard-card">
+                    <div class="card-icon">⚠️</div>
+                    <h4>Low Stock</h4>
+                    <p>@lowStockCount Items</p>
+                    <a asp-controller="Menu" asp-action="Index" class="btn btn-primary btn-sm">Review</a>
+                </div>
             </div>
-        </div>
+        }
     </div>
 
     <div class="row g-4">
