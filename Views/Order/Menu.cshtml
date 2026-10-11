@@ -1,0 +1,102 @@
+@using canteen_management.Models
+@{
+    ViewData["Title"] = "Menu";
+    var breakfast = ViewBag.Breakfast as List<MenuItem> ?? new List<MenuItem>();
+    var lunch = ViewBag.Lunch as List<MenuItem> ?? new List<MenuItem>();
+    var dinner = ViewBag.Dinner as List<MenuItem> ?? new List<MenuItem>();
+    var walletBalance = ViewBag.WalletBalance ?? 0m;
+}
+
+<div class="dashboard-page">
+    <div class="dashboard-header">
+        <div>
+            <p class="text-muted mb-1">Customer</p>
+            <h1>Today's Menu</h1>
+        </div>
+        <span class="badge text-bg-light border">Wallet: $@walletBalance</span>
+    </div>
+
+    @if (TempData["OrderSuccess"] != null)
+    {
+        <div class="alert alert-success">@TempData["OrderSuccess"]</div>
+    }
+
+    @if (TempData["OrderError"] != null)
+    {
+        <div class="alert alert-danger">@TempData["OrderError"]</div>
+    }
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="dashboard-section">
+                <h3>Breakfast</h3>
+                @if (breakfast.Count == 0)
+                {
+                    <p class="text-muted">No breakfast items available.</p>
+                }
+                else
+                {
+                    @foreach (var item in breakfast)
+                    {
+                        <div class="border rounded p-3 mb-3">
+                            <h5>@item.Name</h5>
+                            <p class="mb-2 text-muted">@item.Description</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <strong>$@item.Price</strong>
+                                <span class="badge bg-light text-dark">Stock: @item.StockQuantity</span>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="dashboard-section">
+                <h3>Lunch</h3>
+                @if (lunch.Count == 0)
+                {
+                    <p class="text-muted">No lunch items available.</p>
+                }
+                else
+                {
+                    @foreach (var item in lunch)
+                    {
+                        <div class="border rounded p-3 mb-3">
+                            <h5>@item.Name</h5>
+                            <p class="mb-2 text-muted">@item.Description</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <strong>$@item.Price</strong>
+                                <span class="badge bg-light text-dark">Stock: @item.StockQuantity</span>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="dashboard-section">
+                <h3>Dinner</h3>
+                @if (dinner.Count == 0)
+                {
+                    <p class="text-muted">No dinner items available.</p>
+                }
+                else
+                {
+                    @foreach (var item in dinner)
+                    {
+                        <div class="border rounded p-3 mb-3">
+                            <h5>@item.Name</h5>
+                            <p class="mb-2 text-muted">@item.Description</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <strong>$@item.Price</strong>
+                                <span class="badge bg-light text-dark">Stock: @item.StockQuantity</span>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>

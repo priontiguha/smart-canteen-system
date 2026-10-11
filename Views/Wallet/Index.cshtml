@@ -1,0 +1,108 @@
+@{
+    ViewData["Title"] = "Wallet";
+    var balance = ViewBag.Balance ?? 0m;
+    var transactions = ViewBag.Transactions as IEnumerable<dynamic> ?? new List<dynamic>();
+    var isAdmin = User.IsInRole("Admin");
+    var users = ViewBag.Users as IEnumerable<dynamic> ?? new List<dynamic>();
+}
+
+<div class="dashboard-page">
+    <div class="dashboard-header">
+        <div>
+            <p class="text-muted mb-1">Wallet</p>
+            <h1>Campus Wallet</h1>
+        </div>
+    </div>
+
+    @if (TempData["WalletSuccess"] != null)
+    {
+        <div class="alert alert-success">@TempData["WalletSuccess"]</div>
+    }
+
+    @if (TempData["WalletError"] != null)
+    {
+        <div class="alert alert-danger">@TempData["WalletError"]</div>
+    }
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="dashboard-card">
+                <div class="card-icon">💳</div>
+                <h4>Current Balance</h4>
+                <p class="fs-3 fw-bold mb-0">$@balance</p>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="dashboard-section">
+                @if (isAdmin)
+                {
+                    <h3>Admin Wallet Top-Up</h3>
+                    <form asp-action="TopUp" method="post">
+                        @Html.AntiForgeryToken()
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-6">
+                                <label class="form-label" for="TargetUserId">User</label>
+                                <select id="TargetUserId" name="TargetUserId" class="form-select" required>
+                                    <option value="">Select a user</option>
+                                    @foreach (var user in users)
+                                    {
+                                        <option value="@user.Id">@user.FullName (@user.Email) - @user.Role</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label" for="Amount">Amount</label>
+                                <input id="Amount" name="Amount" type="number" min="1" step="0.01" class="form-control" required />
+                            </div>
+                            <div class="col-md-3">
+                                <button type="submit" class="btn btn-success w-100">Top Up</button>
+                            </div>
+                        </div>
+                    </form>
+                }
+                else
+                {
+                    <h3>Wallet Status</h3>
+                    <div class="alert alert-info mb-0">
+                        Wallet top-up is managed by the administrator.
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-section mt-4">
+        <h3>Transaction History</h3>
+        @if (transactions.Any())
+        {
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Amount</th>
+                            <th>Description</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var tx in transactions)
+                        {
+                            <tr>
+                                <td>@tx.Type</td>
+                                <td>$@tx.Amount</td>
+                                <td>@tx.Description</td>
+                                <td>@tx.CreatedAt</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <p class="text-muted mb-0">No transactions yet.</p>
+        }
+    </div>
+</div>

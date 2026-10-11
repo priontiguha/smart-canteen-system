@@ -1,0 +1,46 @@
+@model List<canteen_management.Models.Order>
+@{
+    ViewData["Title"] = "Kitchen Queue";
+}
+
+<div class="dashboard-page">
+    <div class="dashboard-header">
+        <div>
+            <p class="text-muted mb-1">Kitchen</p>
+            <h1>Order Queue</h1>
+        </div>
+    </div>
+
+    <div class="dashboard-section">
+        @if (Model == null || Model.Count == 0)
+        {
+            <p class="text-muted">No active orders.</p>
+        }
+        else
+        {
+            @foreach (var order in Model)
+            {
+                <div class="border rounded p-3 mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="mb-0">Order #@order.Id.ToString().Substring(0, 8)</h5>
+                        <span class="badge bg-warning text-dark">@order.Status</span>
+                    </div>
+                    <ul class="mb-3">
+                        @foreach (var item in order.Items)
+                        {
+                            <li>@item.MenuItem.Name x @item.Quantity</li>
+                        }
+                    </ul>
+                    <form asp-action="UpdateStatus" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@order.Id" />
+                        <div class="d-flex gap-2">
+                            <button type="submit" name="status" value="@canteen_management.Models.OrderStatus.Preparing" class="btn btn-primary btn-sm">Preparing</button>
+                            <button type="submit" name="status" value="@canteen_management.Models.OrderStatus.ReadyForPickup" class="btn btn-success btn-sm">Ready</button>
+                        </div>
+                    </form>
+                </div>
+            }
+        }
+    </div>
+</div>

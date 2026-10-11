@@ -1,0 +1,39 @@
+@model List<canteen_management.Models.Order>
+@{
+    ViewData["Title"] = "My Orders";
+}
+
+<div class="dashboard-page">
+    <div class="dashboard-header">
+        <div>
+            <p class="text-muted mb-1">Customer</p>
+            <h1>My Orders</h1>
+        </div>
+    </div>
+
+    <div class="dashboard-section">
+        @if (Model == null || Model.Count == 0)
+        {
+            <p class="text-muted">No orders yet.</p>
+        }
+        else
+        {
+            @foreach (var order in Model)
+            {
+                <div class="border rounded p-3 mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="mb-0">Order #@order.Id.ToString().Substring(0, 8)</h5>
+                        <span class="badge bg-primary">@order.Status</span>
+                    </div>
+                    <p class="mb-2">Total: $@order.TotalAmount</p>
+                    <ul class="mb-0">
+                        @foreach (var item in order.Items)
+                        {
+                            <li>@item.MenuItem.Name x @item.Quantity - $@item.TotalPrice</li>
+                        }
+                    </ul>
+                </div>
+            }
+        }
+    </div>
+</div>

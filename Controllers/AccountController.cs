@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using canteen_management.Data;
 using canteen_management.DTOs.Auth;
 using canteen_management.Models;
 using canteen_management.Services;
@@ -6,21 +7,28 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace canteen_management.Controllers;
 
 public class AccountController : Controller
 {
     private readonly IAuthService _authService;
+    private readonly ApplicationDbContext _context;
 
-    public AccountController(IAuthService authService)
+    public AccountController(IAuthService authService, ApplicationDbContext context)
     {
         _authService = authService;
+        _context = context;
     }
 
     [HttpGet]
     public IActionResult Login()
     {
+        // If already logged in, go straight to Dashboard
+        if (User.Identity?.IsAuthenticated == true)
+            return RedirectToAction("Dashboard");
+
         return View();
     }
 
@@ -83,7 +91,7 @@ public class AccountController : Controller
         }
     }
 
-    [Authorize(AuthenticationSchemes = "Cookies", Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateUser([FromForm] AdminCreateUserRequest model)
@@ -118,13 +126,30 @@ public class AccountController : Controller
         }
     }
 
-    [Authorize(AuthenticationSchemes = "Cookies")]
+    [Authorize]
     [HttpGet]
-    public IActionResult Dashboard()
+    public async Task<IActionResult> Dashboard()
     {
         var name = User.FindFirstValue(ClaimTypes.Name) ?? "";
         var email = User.FindFirstValue(ClaimTypes.Email) ?? "";
         var role = User.FindFirstValue(ClaimTypes.Role) ?? UserRole.Student.ToString();
+
+        var menuCount = await _context.MenuItems.CountAsync();
+        var orderCount = await _context.Orders.CountAsync();
+        var lowStockCount = await _context.MenuItems.CountAsync(x => x.StockQuantity <= 5);
+        var revenue = await _context.Orders.SumAsync(x => (decimal?)x.TotalAmount) ?? 0m;
+
+        var recentOrders = await _context.Orders
+            .Include(x => x.User)
+            .OrderByDescending(x => x.CreatedAt)
+            .Take(5)
+            .ToListAsync();
+
+        ViewBag.MenuCount = menuCount;
+        ViewBag.OrderCount = orderCount;
+        ViewBag.LowStockCount = lowStockCount;
+        ViewBag.Revenue = revenue;
+        ViewBag.RecentOrders = recentOrders;
 
         return View(new { Name = name, Email = email, Role = role });
     }
@@ -137,6 +162,7 @@ public class AccountController : Controller
         return RedirectToAction("Login", "Account");
     }
 
+    // Handles any stale GET requests to /Account/Logout (e.g. bookmarks or old links)
     [HttpGet("/Account/Logout")]
     public async Task<IActionResult> LogoutGet()
     {

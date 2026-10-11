@@ -65,6 +65,17 @@ public class AuthService : IAuthService
         _context.Users.Add(user);
         await _context.SaveChangesAsync(cancellationToken);
 
+        _context.Wallets.Add(new Wallet
+        {
+            Id = Guid.NewGuid(),
+            UserId = user.Id,
+            User = user,
+            Balance = 0m,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        });
+        await _context.SaveChangesAsync(cancellationToken);
+
         return user;
     }
 
@@ -115,6 +126,17 @@ public class AuthService : IAuthService
         };
 
         _context.Users.Add(user);
+        await _context.SaveChangesAsync(cancellationToken);
+
+        _context.Wallets.Add(new Wallet
+        {
+            Id = Guid.NewGuid(),
+            UserId = user.Id,
+            User = user,
+            Balance = 0m,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        });
         await _context.SaveChangesAsync(cancellationToken);
 
         return user;
