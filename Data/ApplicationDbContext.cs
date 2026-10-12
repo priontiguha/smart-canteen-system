@@ -163,5 +163,6 @@ public class ApplicationDbContext : DbContext
                 .HasForeignKey(x => x.MenuItemId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
+
     }
 }

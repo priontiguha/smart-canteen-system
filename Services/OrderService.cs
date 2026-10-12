@@ -53,38 +53,49 @@ public class OrderService : IOrderService
             });
         }
 
-        var walletBalance = await _walletService.GetBalanceAsync(user.Id);
-        if (walletBalance < total)
-            throw new InvalidOperationException("Insufficient wallet balance.");
-
-        var walletDeducted = await _walletService.DeductAsync(user.Id, total, "Order payment");
-        if (!walletDeducted)
-            throw new InvalidOperationException("Wallet deduction failed.");
-
-        var order = new Order
+        // Perform the critical operations in a transaction to ensure atomicity
+        using var tx = await _context.Database.BeginTransactionAsync();
+        try
         {
-            Id = Guid.NewGuid(),
-            UserId = user.Id,
-            User = user,
-            Status = OrderStatus.Pending,
-            TotalAmount = total,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
-        };
+            var walletBalance = await _walletService.GetBalanceAsync(user.Id);
+            if (walletBalance < total)
+                throw new InvalidOperationException("Insufficient wallet balance.");
 
-        foreach (var item in orderItems)
-        {
-            item.Order = order;
-            item.OrderId = order.Id;
-            await _menuService.ReduceStockAsync(item.MenuItemId, item.Quantity);
+            var walletDeducted = await _walletService.DeductAsync(user.Id, total, "Order payment");
+            if (!walletDeducted)
+                throw new InvalidOperationException("Wallet deduction failed.");
+
+            var order = new Order
+            {
+                Id = Guid.NewGuid(),
+                UserId = user.Id,
+                User = user,
+                Status = OrderStatus.Pending,
+                TotalAmount = total,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            foreach (var item in orderItems)
+            {
+                item.Order = order;
+                item.OrderId = order.Id;
+                await _menuService.ReduceStockAsync(item.MenuItemId, item.Quantity);
+            }
+
+            order.Items = orderItems;
+
+            _context.Orders.Add(order);
+            await _context.SaveChangesAsync();
+
+            await tx.CommitAsync();
+            return order;
         }
-
-        order.Items = orderItems;
-
-        _context.Orders.Add(order);
-        await _context.SaveChangesAsync();
-
-        return order;
+        catch
+        {
+            await tx.RollbackAsync();
+            throw;
+        }
     }
 
     public async Task<List<Order>> GetOrdersForUserAsync(Guid userId)

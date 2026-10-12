@@ -4,6 +4,5 @@ public enum UserRole
 {
     Admin = 0,
     Student = 1,
-    Faculty = 2,
-    KitchenStaff = 3
+    KitchenStaff = 2
 }

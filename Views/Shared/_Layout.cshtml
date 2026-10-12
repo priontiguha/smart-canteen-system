@@ -26,8 +26,8 @@
 
                     @if (User.IsInRole("Admin"))
                     {
-                        <a class="sidebar-link" asp-controller="Menu" asp-action="Index">
-                            <span>🍽️</span> Menu
+                        <a class="sidebar-link" asp-controller="Order" asp-action="Menu">
+                            <span>🍽️</span> Order Menu
                         </a>
                         <a class="sidebar-link" asp-controller="Order" asp-action="KitchenQueue">
                             <span>🍳</span> Kitchen Queue
@@ -39,7 +39,7 @@
                     else
                     {
                         <a class="sidebar-link" asp-controller="Order" asp-action="Menu">
-                            <span>🍽️</span> Menu
+                            <span>🍽️</span> Order Menu
                         </a>
                         <a class="sidebar-link" asp-controller="Order" asp-action="MyOrders">
                             <span>🛒</span> Orders

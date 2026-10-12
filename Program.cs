@@ -65,7 +65,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
-    options.AddPolicy("MemberAccess", policy => policy.RequireRole("Admin", "Student", "Faculty", "KitchenStaff"));
+    options.AddPolicy("MemberAccess", policy => policy.RequireRole("Admin", "Student", "KitchenStaff"));
 });
 
 builder.Services.AddCors(options =>
@@ -108,5 +108,23 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Account}/{action=Login}/{id?}")
     .WithStaticAssets();
+
+// In Development only: apply migrations.
+if (app.Environment.IsDevelopment())
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var services = scope.ServiceProvider;
+        try
+        {
+            var db = services.GetRequiredService<ApplicationDbContext>();
+            db.Database.Migrate();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Database migration error: {ex.Message}");
+        }
+    }
+}
 
 app.Run();

@@ -198,7 +198,7 @@ public class AuthService : IAuthService
 
     private static bool IsAllowedRole(UserRole role)
     {
-        return role == UserRole.Student || role == UserRole.Faculty || role == UserRole.KitchenStaff;
+        return role == UserRole.Student || role == UserRole.KitchenStaff;
     }
 
     private static bool IsStrongPassword(string password)

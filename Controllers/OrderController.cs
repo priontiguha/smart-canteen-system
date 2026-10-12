@@ -1,6 +1,8 @@
 using canteen_management.DTOs.Order;
+using canteen_management.Data;
 using canteen_management.Models;
 using canteen_management.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -13,12 +15,14 @@ public class OrderController : Controller
     private readonly IOrderService _orderService;
     private readonly IMenuService _menuService;
     private readonly IWalletService _walletService;
+    private readonly ApplicationDbContext _context;
 
-    public OrderController(IOrderService orderService, IMenuService menuService, IWalletService walletService)
+    public OrderController(IOrderService orderService, IMenuService menuService, IWalletService walletService, ApplicationDbContext context)
     {
         _orderService = orderService;
         _menuService = menuService;
         _walletService = walletService;
+        _context = context;
     }
 
     [HttpGet]
