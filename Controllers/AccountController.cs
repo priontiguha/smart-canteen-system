@@ -25,6 +25,10 @@ public class AccountController : Controller
     [HttpGet]
     public IActionResult Login()
     {
+        // If already logged in, go straight to Dashboard
+        if (User.Identity?.IsAuthenticated == true)
+            return RedirectToAction("Dashboard");
+
         return View();
     }
 
@@ -87,7 +91,7 @@ public class AccountController : Controller
         }
     }
 
-    [Authorize(AuthenticationSchemes = "Cookies", Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateUser([FromForm] AdminCreateUserRequest model)
@@ -122,7 +126,7 @@ public class AccountController : Controller
         }
     }
 
-    [Authorize(AuthenticationSchemes = "Cookies")]
+    [Authorize]
     [HttpGet]
     public async Task<IActionResult> Dashboard()
     {
@@ -193,7 +197,8 @@ public class AccountController : Controller
         return Redirect("/Account/Login");
     }
 
-    [HttpGet("Logout")]
+    // Handles any stale GET requests to /Account/Logout (e.g. bookmarks or old links)
+    [HttpGet("/Account/Logout")]
     public async Task<IActionResult> LogoutGet()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
